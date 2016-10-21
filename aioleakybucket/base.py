@@ -1,5 +1,11 @@
 import heapdict
 
+from .utils import frozendict
+
+
+def default_hash(*args, **kwargs):
+    return hash((tuple(args), frozendict.FrozenDict(kwargs)))
+
 
 class Zone(object):
     __slots__ = ('states', 'rate', 'state', 'name', 'max_elements')
@@ -24,7 +30,7 @@ class Zone(object):
 class Limit(object):
     __slots__ = ('zone', 'burst', 'nodelay', 'get_key')
 
-    def __init__(self, zone, burst, nodelay=False, get_key=get_key):
+    def __init__(self, zone, burst, nodelay=False, get_key=default_hash):
         self.zone = zone
         self.burst = burst * 1000
         self.nodelay = nodelay

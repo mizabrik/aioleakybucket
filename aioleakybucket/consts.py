@@ -1,0 +1,5 @@
+DECLINED = 'declined (next handler)'
+AGAIN = 'again'
+BUSY = 'busy'
+ERROR = 'error'
+OK = 'ok'

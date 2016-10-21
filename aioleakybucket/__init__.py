@@ -1,3 +1,6 @@
+from . import base, consts
+
+
 def expire(ts, zone, n):
     while n < 3:
 
@@ -66,3 +69,55 @@ def account(ts, limits, n, excess, limit):
             limit = limits[n]
 
     return max_delay, excess_ret, limit
+
+
+def lookup(ts, limit, key, excess, account):
+    pair = limit.zone.states.get(key)
+
+    if pair is not None:
+        last, state = pair
+
+        limit.zone.states[key] = (-ts, state)
+
+        ms = ts - last
+
+        excess = state.excess - limit.zone.rate * abs(ms) / 1000 + 1000
+
+        if excess < 0:
+            excess = 0
+
+        if excess > limit.burst:
+            return excess, consts.BUSY
+
+        if account:
+            state.excess = excess
+            state.last = ts
+            return excess, consts.OK
+
+        state.count += 1
+        limit.zone.state = state
+        return excess, consts.AGAIN
+
+    excess = 0
+    expire(ts, limit.zone, 0)
+
+    if len(limit.zone.states) >= limit.zone.max_elements:
+        expire(ts, limit.zone, 1)
+
+        if len(limit.zone.states) >= limit.zone.max_elements:
+            return excess, consts.ERROR
+
+    state = base.State(excess)
+
+    if account:
+        state.count = 0
+        state.last = ts
+        limit.zone.states[key] = (-state.last, state)
+        return excess, consts.OK
+
+    state.count = 1
+    state.last = 0
+    limit.zone.states[key] = (-state.last, state)
+    limit.zone.state = state
+
+    return excess, consts.AGAIN

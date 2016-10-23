@@ -1,5 +1,6 @@
 import asyncio
 import collections
+import functools
 import logging
 import timeit
 
@@ -88,6 +89,7 @@ def limit_call(zone, burst=None, nodelay=False,
             fn.limits.append(limit)
             return fn
 
+        @functools.wraps(fn)
         async def wrap(*args, **kwargs):
             rc, delay = handler(timer(), (args, kwargs), limits)
 

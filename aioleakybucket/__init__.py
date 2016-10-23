@@ -4,7 +4,7 @@ import functools
 import logging
 
 
-from . import bucket,  consts, timers
+from . import bucket, callbacks, consts, timers
 
 
 logger = logging.getLogger(__name__)
@@ -77,8 +77,8 @@ def handler(simtime_msec, req, limits):
 def limit_call(zone, burst=None, nodelay=False,
                get_key=base.default_hash,
                timer=timers.default_timer,
-               callback_limit=lambda *args, **kwargs: None,
-               callback_error=lambda *args, **kwargs: None,
+               callback_limit=callbacks.cb_ignore,
+               callback_error=callbacks.cb_ignore,
                loop=None):
 
     limit = base.Limit(zone, burst, nodelay, get_key)

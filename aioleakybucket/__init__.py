@@ -2,9 +2,9 @@ import asyncio
 import collections
 import functools
 import logging
-import timeit
 
-from . import consts, bucket
+
+from . import bucket,  consts, timers
 
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def handler(simtime_msec, req, limits):
 
 def limit_call(zone, burst=None, nodelay=False,
                get_key=base.default_hash,
-               timer=lambda: timeit.default_timer() * 1000,
+               timer=timers.default_timer,
                callback_limit=lambda *args, **kwargs: None,
                callback_error=lambda *args, **kwargs: None,
                loop=None):

@@ -36,10 +36,10 @@ def handler(simtime_msec, req, limits):
 
     if consts.DECLINED == rc:
         return rc, None
-    r.limit_set = True
+    req.limit_set = True
 
-    if (busy == rc) or (error == rc):
-        if busy == rc:
+    if (consts.BUSY == rc) or (consts.ERROR == rc):
+        if consts.BUSY == rc:
             logger.info(
                 'limiting calls, excess: %d.%03d by zone \"%s\"',
                 excess / 1000, excess % 1000, limit.zone,

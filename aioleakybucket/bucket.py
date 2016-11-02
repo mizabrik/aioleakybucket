@@ -79,7 +79,7 @@ def lookup(ts, limit, key, excess, account):
 
         limit.zone.states[key] = (-ts, state)
 
-        ms = ts - last
+        ms = ts - state.last
 
         excess = state.excess - limit.zone.rate * abs(ms) / 1000 + 1000
 

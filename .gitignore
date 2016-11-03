@@ -1,3 +1,4 @@
 .ipython
 __pycache__
 *.pyc
+tests/.cache

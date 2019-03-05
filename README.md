@@ -1,16 +1,23 @@
 # Leaky bucket implementation ported from nginx
 
-## Set up limits
+## Theory
+
+See `/doc` (TODO)
+
+## Usage
+
+### Set up limits
 
 ```
 zone = Zone('zone_name', rate_limit)
 limit1 = Limit(zone, burst, nodelay)
 ```
 
-## Default zones
+### Default zones
 
+TODO
 
-## Decorators
+### Decorators
 
 ```
 @limit_calls(zone, burst, nodelay)
@@ -26,3 +33,21 @@ async def some_other_function():
 ```
 
 ## Manual mode
+
+(Not implemented yet)
+
+Transform a table with calls:
+
+```
+    (timestamp, requester_id, requested_object)
+```
+
+Into
+
+```
+   (timestamp, requester_id, access_granted, delay, excess)
+```
+
+## Synchronous mode
+
+TODO

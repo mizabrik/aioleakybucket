@@ -1,8 +1,13 @@
-import timeit
+import sys
+import time
 
 
-def default_timer():
-    return timeit.default_timer() * 1000
+if sys.version_info >= (3, 7):
+    def default_timer():
+        return time.monotonic_ns() // 1000000
+else:
+    def default_timer():
+        return int(time.monotonic() * 1000)
 
 
 class Incrementer:

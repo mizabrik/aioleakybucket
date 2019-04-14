@@ -1,35 +1,6 @@
 from . import base, consts
 
 
-def expire(ts, zone, n):
-    while n < 3:
-
-        if len(zone.states) == 0:
-            return
-
-        key, (_, state) = zone.states.peekitem()
-
-        if state.count:
-            return
-
-        if n != 0:
-            n += 1
-
-            ms = abs(ts - state.last)
-
-            if ms < 60000:
-                return
-
-            excess = state.excess - zone.rate * ms / 1000
-
-            if excess > 0:
-                return
-        else:
-            n += 1
-
-        del zone.states[key]
-
-
 def account(ts, limits, n, excess, limit):
     excess_ret = excess
 
@@ -99,12 +70,14 @@ def lookup(ts, limit, key, excess, account):
         return excess, consts.AGAIN
 
     excess = 0
-    expire(ts, limit.zone, 0)
 
+    # Free up to two expired nodes
+    if limit.zone.expire(ts):
+        limit.zone.expire(ts)
+
+    # Zone max_elements must not be exceeded
     if len(limit.zone.states) >= limit.zone.max_elements:
-        expire(ts, limit.zone, 1)
-
-        if len(limit.zone.states) >= limit.zone.max_elements:
+        if not limit.zone.expire(ts, True):
             return excess, consts.ERROR
 
     state = base.State(excess)

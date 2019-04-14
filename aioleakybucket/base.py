@@ -26,6 +26,28 @@ class Zone:
         self.states = heapdict.heapdict()
         self.max_elements = max_elements
 
+    def expire(self, ts, force=False):
+        if len(self.states) == 0:
+            return False
+
+        key, (_, state) = zone.states.peekitem()
+
+        if state.count:
+            return False
+
+        if not force:
+            ms = abs(ts - state.last)
+
+            if ms < 60000:
+                return False
+
+            excess = state.excess - zone.rate * ms / 1000
+
+            if excess > 0:
+                return False
+
+        del zone.states[key]
+        return True
 
 class Limit:
     __slots__ = ('zone', 'burst', 'nodelay', 'get_key')

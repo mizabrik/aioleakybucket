@@ -7,7 +7,7 @@ def default_hash(*args, **kwargs):
     return hash((tuple(args), frozendict.FrozenDict(kwargs)))
 
 
-class Zone(object):
+class Zone:
     __slots__ = ('states', 'rate', 'state', 'name', 'max_elements')
 
     def __str__(self):
@@ -27,7 +27,7 @@ class Zone(object):
         self.max_elements = max_elements
 
 
-class Limit(object):
+class Limit:
     __slots__ = ('zone', 'burst', 'nodelay', 'get_key')
 
     def __init__(self, zone, burst, nodelay=False, get_key=default_hash):
@@ -42,7 +42,7 @@ class Limit(object):
         )
 
 
-class State(object):
+class State:
     __slots__ = ('excess', 'count', 'last')
 
     def __init__(self, excess, count=0, last=0):
